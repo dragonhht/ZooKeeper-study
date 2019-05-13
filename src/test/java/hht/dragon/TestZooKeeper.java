@@ -30,6 +30,7 @@ public class TestZooKeeper {
             public void process(WatchedEvent watchedEvent) {
                 if (watchedEvent.getState() == Event.KeeperState.SyncConnected) {
                     latch.countDown();
+                    System.out.println("状态： " + watchedEvent.getState());
                 }
             }
         });
