@@ -6,13 +6,11 @@ import org.apache.curator.framework.recipes.cache.NodeCache;
 import org.apache.curator.framework.recipes.cache.PathChildrenCache;
 import org.apache.curator.framework.recipes.cache.PathChildrenCacheEvent;
 import org.apache.curator.retry.RetryNTimes;
-import org.apache.curator.retry.RetryOneTime;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -51,6 +49,9 @@ public class CuratorTest {
 
     @Test
     public void operate() throws Exception {
+        // 事件监听
+        listener();
+
         // 创建节点数据
         curator.create()
                 .creatingParentsIfNeeded()
@@ -72,6 +73,10 @@ public class CuratorTest {
 
         // 修改节点数据
         curator.setData().forPath(NODE_PATH, "hello".getBytes());
+        print(NODE_PATH);
+
+        // 使用后台想成修改节点数据
+        curator.setData().inBackground().forPath(NODE_PATH, "word".getBytes());
         print(NODE_PATH);
 
         // 获取子节点
@@ -111,6 +116,26 @@ public class CuratorTest {
             PathChildrenCacheEvent.Type type = pathChildrenCacheEvent.getType();
             System.out.println("子节点事件监听: " + type);
         }));
+    }
+
+    /**
+     * 事件监听
+     */
+    private void listener() {
+        // 使用后台线程操作时，线程操作完后触发
+        curator.getCuratorListenable().addListener((client, event) -> {
+            System.out.println("触发事件: " + event);
+        });
+
+        // 连接状态监听
+        curator.getConnectionStateListenable().addListener((client, stat) -> {
+            System.out.println("连接状态： " + stat);
+        });
+
+        // 异常监听
+        curator.getUnhandledErrorListenable().addListener((message, e) -> {
+            System.out.println("异常触发: " + message);
+        });
     }
 
     /**

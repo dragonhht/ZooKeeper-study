@@ -1,6 +1,6 @@
 package hht.dragon.pub.sub;
 
-import lombok.Data;
+import lombok.*;
 
 /**
  * 配置信息类.
@@ -8,7 +8,11 @@ import lombok.Data;
  * @author: huang
  * @Date: 2019-5-15
  */
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class PropertiesPojo {
     private String className;
     private String value;
