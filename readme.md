@@ -175,7 +175,7 @@
 
 # 几个常见的功能
 
--   数据的发布/订阅(用于配置中心)
+-   [数据的发布/订阅(用于配置中心)](./src/test/java/hht/dragon/pub/sub)
 
     -   Zookeeper采用推拉相结合的方法，客户端向服务端注册自己需要关注的节点，当节点数据发生变化，服务端会向客户端发送`watcher`事件。客户端接收通知后，主动到服务器获取数据
     
@@ -195,6 +195,10 @@
             
             -   [`共享锁`](./src/test/java/hht/dragon/lock/DistributedLock.java):通过有序节点
 
--   分布式队列
+-   [分布式队列](./src/test/java/hht/dragon/queue)
 
 -   命名服务
+
+-   Master选举
+
+    > 利用Zookeeper临时节点的特性，当服务启动时个服务争抢注册节点，注册成功的则为master。当master服务无法联系，zookeeper会删除临时节点。同时需要重新选举

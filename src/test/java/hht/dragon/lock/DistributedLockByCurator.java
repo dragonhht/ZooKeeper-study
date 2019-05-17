@@ -5,13 +5,17 @@ import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.recipes.locks.InterProcessMutex;
 import org.apache.curator.retry.RetryNTimes;
 
-import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 使用Curator实现分布式共享锁.
+ * 使用Curator实现分布式锁.
+ *
+ * InterProcessMutex：分布式可重入排它锁
+ * InterProcessSemaphoreMutex：分布式排它锁
+ * InterProcessReadWriteLock：分布式读写锁
+ * InterProcessMultiLock：将多个锁作为单个实体管理的容器
  *
  * @author: huang
  * @Date: 2019-5-15
@@ -22,6 +26,7 @@ public class DistributedLockByCurator {
     private static final String ROOT_NODE = "/DISTRIBUTE_LOCK";
 
     private CuratorFramework curator;
+    /** 可重入排它锁. */
     private InterProcessMutex interProcessMutex;
 
     /**
@@ -43,7 +48,9 @@ public class DistributedLockByCurator {
      * @return
      */
     public boolean lock() {
-        init();
+        if (curator == null) {
+            init();
+        }
         interProcessMutex = new InterProcessMutex(curator, ROOT_NODE);
         try {
             // 加锁
